@@ -16,7 +16,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     Button button, button2;
-    String APIKey = "P6eflaANHkOikO2vBjlId8H4XcQGc3YP";
+    String APIKey = "oz0KFHSiSi0GtZnx6nR67AADDBRAqot6";
     String latLog = "28.6924683,77.3156835";
     String language = "en-us";
     Boolean details = false;
@@ -69,25 +69,32 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (isButtonOneClicked) {
 
-                    Call<Model2> call = APIClient.getClient().getWether(API.WETHER, APIKey, language, details);
-                    call.enqueue(new Callback<Model2>() {
+                    Call<List<Model2>> call = APIClient.getClient().getWether(API.WETHER,APIKey,language,details);
+                    call.enqueue(new Callback<List<Model2>>() {
                         @Override
-                        public void onResponse(Call<Model2> call, Response<Model2> response) {
-
-                            textView.setText("The Weather is: " + response.body().getWeatherText());
-                            if (response.isSuccessful()) {
+                        public void onResponse(Call<List<Model2>> call, Response<List<Model2>> response) {
+//                            textView.setText("The Weather is: " + response.body().toString());
+                            if(response.isSuccessful()){
                                 Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                            } else {
+                                String str="";
+                                /*for(Model2 model2 : response.body()){
+                                    str+=model2.toString();
+                                }*/
+                                str="Weather is "+response.body().get(0).getWeatherText()+" and Local Observation Time "+response.body().get(0).getLocalObservationDateTime();
+                                textView.setText(str);
+                            }
+                            else{
                                 Toast.makeText(MainActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
                             }
-
                         }
 
                         @Override
-                        public void onFailure(Call<Model2> call, Throwable t) {
+                        public void onFailure(Call<List<Model2>> call, Throwable t) {
                             Toast.makeText(MainActivity.this, "Failure", Toast.LENGTH_SHORT).show();
                         }
                     });
+
+
                 } else {
                     Toast.makeText(MainActivity.this, "Click above button first", Toast.LENGTH_SHORT).show();
                 }
